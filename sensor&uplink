@@ -10,8 +10,8 @@ DigitalOut myleds[] = {LED1, LED2, LED3, LED4};
 
 #define MUXaddress 0x70<<1 //MUX address shift left for lsb=0
 HEPTA_CDH cdh(p5, p6, p7, p8, "sd");
-HEPTA_COM com(p9, p10, 115200);
-RawSerial pc(USBTX,USBRX,115200);
+HEPTA_COM com(p9, p10, 9600);
+RawSerial pc(USBTX,USBRX,9600);
 DigitalOut Addr0(p23);
 DigitalOut Addr1(p22);
 DigitalOut Addr2(p21);
