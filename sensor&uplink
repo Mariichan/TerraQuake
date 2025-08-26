@@ -1,0 +1,50 @@
+#include "mbed.h"
+#include "HEPTA_EPS.h"
+#include "HEPTA_SENSOR.h"
+#include "HEPTA_CDH.h"
+#include "HEPTA_COM.h"
+#include "TCA9548.h"
+
+#define BLINKING_RATE_1     100ms
+DigitalOut myleds[] = {LED1, LED2, LED3, LED4};
+
+#define MUXaddress 0x70<<1 //MUX address shift left for lsb=0
+HEPTA_CDH cdh(p5, p6, p7, p8, "sd");
+HEPTA_COM com(p9, p10, 115200);
+RawSerial pc(USBTX,USBRX,115200);
+DigitalOut Addr0(p23);
+DigitalOut Addr1(p22);
+DigitalOut Addr2(p21);
+DigitalOut GPS(p24);
+DigitalOut condition(LED1);
+TCA9548 i2cMux(p28, p27);
+HEPTA_SENSOR sensor(p17,
+                    p28,p27,0x19,0x69,0x13,
+                    p13, p14, p25, p26);
+
+int main()
+{
+    com.printf("From Sensors (Wireless)\r\n");
+    pc.printf("From Sensor (Wired)\r\n");
+    float ax,ay,az;
+    int i1;
+
+    for (i1=0; true; i1++) {
+        i2cMux.ch(CH0);
+        sensor.sen_acc(&ax,&ay,&az);
+        com.printf("0,%f,%f,%f\r\n",ax,ay,az);
+        wait(0.01);
+
+        i2cMux.ch(CH1);
+        sensor.sen_acc(&ax,&ay,&az);
+        com.printf("1,%f,%f,%f\r\n",ax,ay,az);
+        wait(0.01);
+
+        i2cMux.ch(CH2);
+        sensor.sen_acc(&ax,&ay,&az);
+        com.printf("2,%f,%f,%f\r\n",ax,ay,az);
+        wait(0.01);
+
+    }
+    com.initialize();
+}
